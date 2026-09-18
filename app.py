@@ -58,10 +58,9 @@ def main():
             deg_input = st.slider("각도(Degree)를 움직여보세요:", 0, 360, 180, step=5)
             rad_val = deg_input * (np.pi / 180)
             
-            # f-string 대신 문자열 포맷팅 사용 (LaTeX 중괄호 에러 완벽 방지)
             st.latex(r"%d^\circ = \frac{%d\pi}{180} \approx %.3f\text{ rad}" % (deg_input, deg_input, rad_val))
             
-            # 시각화
+            # 시각화 (그래프 한글 깨짐 방지를 위해 영문/수식 라벨 적용)
             fig, ax = plt.subplots(figsize=(4, 4))
             theta = np.linspace(0, rad_val, 100)
             ax.plot(np.cos(theta), np.sin(theta), 'b-', lw=2)
@@ -71,7 +70,7 @@ def main():
             ax.axhline(0, color='gray', lw=0.8)
             ax.axvline(0, color='gray', lw=0.8)
             ax.set_aspect('equal')
-            ax.set_title(f"중심각: {deg_input}도 ({rad_val:.2f} rad)")
+            ax.set_title(f"Angle: {deg_input} deg ({rad_val:.2f} rad)")
             st.pyplot(fig)
 
     # ----------------------------------------------------
@@ -87,7 +86,7 @@ def main():
         * **기울기($\\frac{y}{x}$)** = $\\tan\\theta$
         """)
 
-        angle_deg = st.slider("각도 \\(\\theta\\) 조절하기:", 0, 360, 45, step=1)
+        angle_deg = st.slider("각도 θ 조절하기:", 0, 360, 45, step=1)
         angle_rad = np.radians(angle_deg)
         
         x_pos = np.cos(angle_rad)
@@ -97,9 +96,9 @@ def main():
         circle = plt.Circle((0, 0), 1, color='lightgray', fill=False, linestyle='--', lw=1.5)
         ax.add_patch(circle)
         
-        ax.plot([0, x_pos], [0, y_pos], 'ro-', lw=2, label=f"점 P({x_pos:.2f}, {y_pos:.2f})")
-        ax.plot([x_pos, x_pos], [0, y_pos], 'g--', lw=1.5, label=f"sin값 = {y_pos:.2f}")
-        ax.plot([0, x_pos], [0, 0], 'b--', lw=1.5, label=f"cos값 = {x_pos:.2f}")
+        ax.plot([0, x_pos], [0, y_pos], 'ro-', lw=2, label=f"Point P({x_pos:.2f}, {y_pos:.2f})")
+        ax.plot([x_pos, x_pos], [0, y_pos], 'g--', lw=1.5, label=f"sin = {y_pos:.2f}")
+        ax.plot([0, x_pos], [0, 0], 'b--', lw=1.5, label=f"cos = {x_pos:.2f}")
         
         ax.set_xlim(-1.3, 1.3)
         ax.set_ylim(-1.3, 1.3)
@@ -108,7 +107,7 @@ def main():
         ax.set_aspect('equal')
         ax.grid(True, linestyle=':', alpha=0.6)
         ax.legend(loc='upper right')
-        ax.set_title(f"각도 = {angle_deg}도 일 때의 단위원 좌표")
+        ax.set_title(f"Unit Circle (theta = {angle_deg} deg)")
         
         st.pyplot(fig)
         st.info(f"💡 현재 각도에서 **Cosine(가로)은 {x_pos:.3f}**, **Sine(세로)은 {y_pos:.3f}** 입니다.")
@@ -137,7 +136,7 @@ def main():
         ax.grid(True, linestyle='--', alpha=0.7)
         ax.set_ylim(-3.5, 3.5)
         ax.legend()
-        ax.set_title("Sine 파동 그래프")
+        ax.set_title("Sine Wave Graph")
         st.pyplot(fig)
 
         st.success("📌 **시험 출제 포인트!**\n- **주기($T$) 구하는 공식:** $\\frac{2\\pi}{b}$ (원래 주기 $2\\pi$를 $x$ 앞의 계수 $b$로 나눕니다!)\n- **최대값:** $|a|$, **최소값:** $-|a|$")
@@ -161,7 +160,7 @@ def main():
         ax.grid(True, linestyle='--', alpha=0.7)
         ax.set_ylim(-3.5, 3.5)
         ax.legend()
-        ax.set_title("Cosine 파동 그래프")
+        ax.set_title("Cosine Wave Graph")
         st.pyplot(fig)
 
         st.info(f"💡 **선생님의 한마디:** 코사인 그래프는 사인 그래프를 왼쪽으로 $\\frac{{\\pi}}{{2}}$만큼 밀어낸 모양과 완전히 똑같습니다! ($\\sin(x + \\frac{{\\pi}}{{2}}) = \\cos x$)")
@@ -190,7 +189,7 @@ def main():
         ax.set_ylim(-10, 10)
         ax.grid(True, linestyle='--', alpha=0.7)
         ax.legend()
-        ax.set_title("Tangent 그래프와 점근선")
+        ax.set_title("Tangent Graph")
         st.pyplot(fig)
 
         st.success("📌 **시험 꿀팁 (주기 주의사항)!**\n- 사인, 코사인의 주기는 $2\\pi$이지만, **탄젠트의 주기는 단 $\\pi$**입니다!")
