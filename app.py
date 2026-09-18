@@ -22,15 +22,15 @@ def main():
         [
             "1. 각도의 새로운 이해 (6분법 vs 호도법·라디안)",
             "2. 삼각함수의 본질 (단위원과 좌표)",
-            "3. 사인(Sin) 그래프와 조작",
-            "4. 코사인(Cos) 그래프와 조작",
-            "5. 탄젠트(Tan) 그래프와 조작",
+            "3. 사인(Sin) 그래프 완벽 조작: a·sin(bx+c)+d",
+            "4. 코사인(Cos) 그래프 완벽 조작: a·cos(bx+c)+d",
+            "5. 탄젠트(Tan) 그래프 완벽 조작: a·tan(bx+c)+d",
             "6. 🏆 실력 확인 퀴즈 & 오답 노트"
         ]
     )
 
     st.sidebar.markdown("---")
-    st.sidebar.info("💡 **선생님의 꿀팁 조언**\n눈으로 보고 직접 슬라이더를 움직여야 비로소 내 것이 됩니다!")
+    st.sidebar.info("💡 **선생님의 꿀팁 조언**\n$a, b, c, d$ 슬라이더를 직접 움직이며 그래프의 변화를 관찰해 보세요!")
 
     # ----------------------------------------------------
     # 1. 라디안과 호도법
@@ -60,7 +60,6 @@ def main():
             
             st.latex(r"%d^\circ = \frac{%d\pi}{180} \approx %.3f\text{ rad}" % (deg_input, deg_input, rad_val))
             
-            # 시각화 (그래프 한글 깨짐 방지를 위해 영문/수식 라벨 적용)
             fig, ax = plt.subplots(figsize=(4, 4))
             theta = np.linspace(0, rad_val, 100)
             ax.plot(np.cos(theta), np.sin(theta), 'b-', lw=2)
@@ -113,86 +112,123 @@ def main():
         st.info(f"💡 현재 각도에서 **Cosine(가로)은 {x_pos:.3f}**, **Sine(세로)은 {y_pos:.3f}** 입니다.")
 
     # ----------------------------------------------------
-    # 3. 사인(Sine) 그래프
+    # 3. 사인(Sine) 그래프 조작: a*sin(bx+c)+d
     # ----------------------------------------------------
-    elif menu == "3. 사인(Sin) 그래프와 조작":
-        st.title("📈 3. 파도처럼 출렁이는 파동: $y = a \\sin(bx + c)$")
+    elif menu == "3. 사인(Sin) 그래프 완벽 조작: a·sin(bx+c)+d":
+        st.title("📈 3. 사인 그래프 완벽 탐구: $y = a \\sin(bx + c) + d$")
         
-        col1, col2, col3 = st.columns(3)
+        col1, col2, col3, col4 = st.columns(4)
         with col1:
-            amp = st.slider("진폭 ($a$, 높낮이):", 0.5, 3.0, 1.0, 0.1)
+            a = st.slider("a (진폭/높낮이):", -3.0, 3.0, 1.0, 0.1, key="sin_a")
         with col2:
-            freq = st.slider("주파수 조절 ($b$, 주기 변화):", 0.5, 3.0, 1.0, 0.1)
+            b = st.slider("b (주기 결정):", 0.1, 3.0, 1.0, 0.1, key="sin_b")
         with col3:
-            shift = st.slider("위상 이동 ($c$, 좌우 이동):", -np.pi, np.pi, 0.0, 0.1)
+            c = st.slider("c (x축 평행이동):", -np.pi, np.pi, 0.0, 0.1, key="sin_c")
+        with col4:
+            d = st.slider("d (y축 평행이동):", -3.0, 3.0, 0.0, 0.1, key="sin_d")
 
         x = np.linspace(-2 * np.pi, 2 * np.pi, 500)
-        y = amp * np.sin(freq * x + shift)
+        y = a * np.sin(b * x + c) + d
 
-        fig, ax = plt.subplots(figsize=(10, 4))
-        ax.plot(x, y, color='crimson', lw=2.5, label=f'y = {amp}sin({freq}x + {shift:.1f})')
+        fig, ax = plt.subplots(figsize=(10, 4.5))
+        ax.plot(x, y, color='crimson', lw=2.5, label=f'y = {a:.1f}*sin({b:.1f}x + {c:.1f}) + {d:.1f}')
         ax.axhline(0, color='black', lw=1)
         ax.axvline(0, color='black', lw=1)
         ax.grid(True, linestyle='--', alpha=0.7)
-        ax.set_ylim(-3.5, 3.5)
-        ax.legend()
-        ax.set_title("Sine Wave Graph")
+        ax.set_ylim(-6.0, 6.0)
+        ax.legend(loc='upper right')
+        ax.set_title("Sine Graph: y = a*sin(bx+c)+d")
         st.pyplot(fig)
 
-        st.success("📌 **시험 출제 포인트!**\n- **주기($T$) 구하는 공식:** $\\frac{2\\pi}{b}$ (원래 주기 $2\\pi$를 $x$ 앞의 계수 $b$로 나눕니다!)\n- **최대값:** $|a|$, **최소값:** $-|a|$")
-
-    # ----------------------------------------------------
-    # 4. 코사인(Cosine) 그래프
-    # ----------------------------------------------------
-    elif menu == "4. 코사인(Cos) 그래프와 조작":
-        st.title("📉 4. 사인과 쌍둥이 형제: $y = a \\cos(bx)$")
+        period = (2 * np.pi) / b
+        max_val = abs(a) + d
+        min_val = -abs(a) + d
         
-        c_amp = st.slider("코사인 진폭 ($a$):", 0.5, 3.0, 1.0, 0.1, key="c_amp")
-        c_freq = st.slider("코사인 주기 조절 ($b$):", 0.5, 3.0, 1.0, 0.1, key="c_freq")
-
-        x = np.linspace(-2 * np.pi, 2 * np.pi, 500)
-        y = c_amp * np.cos(c_freq * x)
-
-        fig, ax = plt.subplots(figsize=(10, 4))
-        ax.plot(x, y, color='dodgerblue', lw=2.5, label=f'y = {c_amp}cos({c_freq}x)')
-        ax.axhline(0, color='black', lw=1)
-        ax.axvline(0, color='black', lw=1)
-        ax.grid(True, linestyle='--', alpha=0.7)
-        ax.set_ylim(-3.5, 3.5)
-        ax.legend()
-        ax.set_title("Cosine Wave Graph")
-        st.pyplot(fig)
-
-        st.info(f"💡 **선생님의 한마디:** 코사인 그래프는 사인 그래프를 왼쪽으로 $\\frac{{\\pi}}{{2}}$만큼 밀어낸 모양과 완전히 똑같습니다! ($\\sin(x + \\frac{{\\pi}}{{2}}) = \\cos x$)")
-
-    # ----------------------------------------------------
-    # 5. 탄젠트(Tangent) 그래프
-    # ----------------------------------------------------
-    elif menu == "5. 탄젠트(Tan) 그래프와 조작":
-        st.title("📐 5. 쭉쭉 뻗어 올라가는 로켓: $y = \\tan(x)$")
-        
-        st.markdown("""
-        탄젠트는 $\\frac{\\sin x}{\\cos x}$ 예요. 즉, **분모인 $\\cos x$가 0이 되는 곳**에서는 값이 존재할 수 없어요! 
-        이 선들을 수학에서는 **점근선(Asymptote)**이라고 부릅니다.
+        st.success(f"""
+        📌 **현재 함수 분석 노트**
+        - **주기(T):** $\\frac{{2\\pi}}{{|b|}} = \\frac{{2\\pi}}{{{b:.1f}}} \\approx {period:.2f}$
+        - **최댓값:** $|a| + d = |{a:.1f}| + ({d:.1f}) = {max_val:.2f}$
+        - **최솟값:** $-|a| + d = -|{a:.1f}| + ({d:.1f}) = {min_val:.2f}$
         """)
 
-        t_range = st.slider("탄젠트 관찰 범위 조절:", 1.0, 3.0, 1.5, 0.1)
+    # ----------------------------------------------------
+    # 4. 코사인(Cosine) 그래프 조작: a*cos(bx+c)+d
+    # ----------------------------------------------------
+    elif menu == "4. 코사인(Cos) 그래프 완벽 조작: a·cos(bx+c)+d":
+        st.title("📉 4. 코사인 그래프 완벽 탐구: $y = a \\cos(bx + c) + d$")
         
-        x = np.linspace(-t_range * np.pi, t_range * np.pi, 1000)
-        y = np.tan(x)
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            a = st.slider("a (진폭/높낮이):", -3.0, 3.0, 1.0, 0.1, key="cos_a")
+        with col2:
+            b = st.slider("b (주기 결정):", 0.1, 3.0, 1.0, 0.1, key="cos_b")
+        with col3:
+            c = st.slider("c (x축 평행이동):", -np.pi, np.pi, 0.0, 0.1, key="cos_c")
+        with col4:
+            d = st.slider("d (y축 평행이동):", -3.0, 3.0, 0.0, 0.1, key="cos_d")
+
+        x = np.linspace(-2 * np.pi, 2 * np.pi, 500)
+        y = a * np.cos(b * x + c) + d
+
+        fig, ax = plt.subplots(figsize=(10, 4.5))
+        ax.plot(x, y, color='dodgerblue', lw=2.5, label=f'y = {a:.1f}*cos({b:.1f}x + {c:.1f}) + {d:.1f}')
+        ax.axhline(0, color='black', lw=1)
+        ax.axvline(0, color='black', lw=1)
+        ax.grid(True, linestyle='--', alpha=0.7)
+        ax.set_ylim(-6.0, 6.0)
+        ax.legend(loc='upper right')
+        ax.set_title("Cosine Graph: y = a*cos(bx+c)+d")
+        st.pyplot(fig)
+
+        period = (2 * np.pi) / b
+        max_val = abs(a) + d
+        min_val = -abs(a) + d
+        
+        st.info(f"""
+        📌 **현재 함수 분석 노트**
+        - **주기(T):** $\\frac{{2\\pi}}{{|b|}} = \\frac{{2\\pi}}{{{b:.1f}}} \\approx {period:.2f}$
+        - **최댓값:** $|a| + d = |{a:.1f}| + ({d:.1f}) = {max_val:.2f}$
+        - **최솟값:** $-|a| + d = -|{a:.1f}| + ({d:.1f}) = {min_val:.2f}$
+        """)
+
+    # ----------------------------------------------------
+    # 5. 탄젠트(Tangent) 그래프 조작: a*tan(bx+c)+d
+    # ----------------------------------------------------
+    elif menu == "5. 탄젠트(Tan) 그래프 완벽 조작: a·tan(bx+c)+d":
+        st.title("📐 5. 탄젠트 그래프 완벽 탐구: $y = a \\tan(bx + c) + d$")
+        
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            a = st.slider("a (기울기/수직배율):", -3.0, 3.0, 1.0, 0.1, key="tan_a")
+        with col2:
+            b = st.slider("b (주기 결정):", 0.1, 3.0, 1.0, 0.1, key="tan_b")
+        with col3:
+            c = st.slider("c (x축 평행이동):", -np.pi, np.pi, 0.0, 0.1, key="tan_c")
+        with col4:
+            d = st.slider("d (y축 평행이동):", -3.0, 3.0, 0.0, 0.1, key="tan_d")
+
+        x = np.linspace(-2 * np.pi, 2 * np.pi, 1000)
+        y = a * np.tan(b * x + c) + d
+        
+        # 점근선 부근 불연속선 튀는 문제 방지 마스킹
         y[np.abs(np.gradient(y)) > 50] = np.nan
 
-        fig, ax = plt.subplots(figsize=(10, 4))
-        ax.plot(x, y, color='forestgreen', lw=2.5, label='y = tan(x)')
+        fig, ax = plt.subplots(figsize=(10, 4.5))
+        ax.plot(x, y, color='forestgreen', lw=2.5, label=f'y = {a:.1f}*tan({b:.1f}x + {c:.1f}) + {d:.1f}')
         ax.axhline(0, color='black', lw=1)
         ax.axvline(0, color='black', lw=1)
         ax.set_ylim(-10, 10)
         ax.grid(True, linestyle='--', alpha=0.7)
-        ax.legend()
-        ax.set_title("Tangent Graph")
+        ax.legend(loc='upper right')
+        ax.set_title("Tangent Graph: y = a*tan(bx+c)+d")
         st.pyplot(fig)
 
-        st.success("📌 **시험 꿀팁 (주기 주의사항)!**\n- 사인, 코사인의 주기는 $2\\pi$이지만, **탄젠트의 주기는 단 $\\pi$**입니다!")
+        period = np.pi / b
+        st.warning(f"""
+        📌 **탄젠트 특징 유의사항**
+        - **탄젠트 주기(T):** $\\frac{{\\pi}}{{|b|}} = \\frac{{\\pi}}{{{b:.1f}}} \\approx {period:.2f}$ (사인/코사인의 절반!)
+        - **최댓값/최솟값:** 실수 전체로 뻗어나가므로 **존재하지 않음**
+        """)
 
     # ----------------------------------------------------
     # 6. 실력 확인 퀴즈 & 오답 노트
